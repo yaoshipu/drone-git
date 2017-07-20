@@ -22,12 +22,13 @@ type (
 	}
 
 	Config struct {
-		Depth           int
-		Recursive       bool
-		SkipVerify      bool
-		Tags            bool
-		Submodules      map[string]string
-		SubmoduleRemote bool
+		Depth            int
+		Recursive        bool
+		SkipVerify       bool
+		Tags             bool
+		Submodules       map[string]string
+		SubmoduleRemote  bool
+		IsDependencyRepo bool
 	}
 )
 

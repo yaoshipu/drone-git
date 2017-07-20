@@ -95,6 +95,24 @@ func main() {
 			Name:  "env-file",
 			Usage: "source env file",
 		},
+		// ------------------------------------------------------
+		// 自定义 drone-git 参数
+		cli.StringFlag{
+			Name:   "custom.remote.url",
+			Usage:  "custom git remote url",
+			EnvVar: "PLUGIN_REMOTE_URL",
+		},
+		cli.StringFlag{
+			Name:   "branch",
+			Usage:  "repo branch",
+			EnvVar: "PLUGIN_BRANCH",
+		},
+		cli.StringFlag{
+			Name:   "custom.path",
+			Usage:  "custom git clone path",
+			EnvVar: "PLUGIN_PATH",
+		},
+		// ------------------------------------------------------
 	}
 
 	if err := app.Run(os.Args); err != nil {
@@ -108,15 +126,36 @@ func run(c *cli.Context) error {
 		_ = godotenv.Load(c.String("env-file"))
 	}
 
+	// 如果存在custom.remote.url, 则认为是要下载依赖包，比如base库等, 否则使用drone传入remote
+	remote := c.String("remote")
+	isDependencyRepo := false
+	if c.String("custom.remote.url") != "" {
+		remote = c.String("custom.remote.url")
+		isDependencyRepo = true
+	}
+
+	// 如果存在branch, 则替换ref为refs/heads/$branch, 否则使用drone传入ref
+	refs := c.String("ref")
+	if c.String("branch") != "" {
+		refs = fmt.Sprintf("refs/heads/%s", c.String("branch"))
+	}
+
+	// 如果存在custom.path, 则替换clone repo path, 否则使用drone传入workspace
+	// drone默认为: /drone/src/github.com/octocat/hello-world
+	path := c.String("path")
+	if c.String("custom.path") != "" {
+		path = c.String("custom.path")
+	}
+
 	plugin := Plugin{
 		Repo: Repo{
-			Clone: c.String("remote"),
+			Clone: remote,
 		},
 		Build: Build{
 			Commit: c.String("sha"),
 			Event:  c.String("event"),
-			Path:   c.String("path"),
-			Ref:    c.String("ref"),
+			Path:   path,
+			Ref:    refs,
 		},
 		Netrc: Netrc{
 			Login:    c.String("netrc.username"),
@@ -124,14 +163,17 @@ func run(c *cli.Context) error {
 			Password: c.String("netrc.password"),
 		},
 		Config: Config{
-			Depth:           c.Int("depth"),
-			Tags:            c.Bool("tags"),
-			Recursive:       c.BoolT("recursive"),
-			SkipVerify:      c.Bool("skip-verify"),
-			SubmoduleRemote: c.Bool("submodule-update-remote"),
-			Submodules:      c.Generic("submodule-override").(*MapFlag).Get(),
+			Depth:            c.Int("depth"),
+			Tags:             c.Bool("tags"),
+			Recursive:        c.BoolT("recursive"),
+			SkipVerify:       c.Bool("skip-verify"),
+			SubmoduleRemote:  c.Bool("submodule-update-remote"),
+			Submodules:       c.Generic("submodule-override").(*MapFlag).Get(),
+			IsDependencyRepo: isDependencyRepo,
 		},
 	}
+
+	logrus.Infof("plugin: %+v", plugin)
 
 	return plugin.Exec()
 }
