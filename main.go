@@ -112,6 +112,11 @@ func main() {
 			Usage:  "custom git clone path",
 			EnvVar: "PLUGIN_PATH",
 		},
+		cli.StringFlag{
+			Name:   "debug",
+			Usage:  "show debug info",
+			EnvVar: "PLUGIN_DEBUG",
+		},
 		// ------------------------------------------------------
 	}
 
@@ -173,7 +178,13 @@ func run(c *cli.Context) error {
 		},
 	}
 
-	logrus.Infof("plugin: %+v", plugin)
+	// 显示环境变量和Plugin详细信息
+	if c.Bool("debug") {
+		logrus.Infof("plugin: %+v", plugin)
+		for _, e := range os.Environ() {
+			logrus.Info(e)
+		}
+	}
 
 	return plugin.Exec()
 }
