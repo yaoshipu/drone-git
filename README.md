@@ -1,9 +1,6 @@
 # drone-git
 
-[![Build Status](http://beta.drone.io/api/badges/drone-plugins/drone-git/status.svg)](http://beta.drone.io/drone-plugins/drone-git)
-[![Go Doc](https://godoc.org/github.com/drone-plugins/drone-git?status.svg)](http://godoc.org/github.com/drone-plugins/drone-git)
-[![Go Report](https://goreportcard.com/badge/github.com/drone-plugins/drone-git)](https://goreportcard.com/report/github.com/drone-plugins/drone-git)
-[![Join the chat at https://gitter.im/drone/drone](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/drone/drone)
+[![Build Status](http://drone-server.ke-cs.dev.qiniu.io/api/badges/yaoshipu/drone-git/status.svg)](http://drone-server.ke-cs.dev.qiniu.io/yaoshipu/drone-git)
 
 Drone plugin to clone `git` repositories. For the usage information and a
 listing of the available options please take a look at [the docs](http://plugins.drone.io/drone-plugins/drone-git).

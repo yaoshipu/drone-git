@@ -39,10 +39,22 @@ func (p Plugin) Exec() error {
 	}
 
 	switch {
-	case isPullRequest(p.Build.Event) || isTag(p.Build.Event, p.Build.Ref) || p.Config.IsDependencyRepo:
+	case isPullRequest(p.Build.Event) || isTag(p.Build.Event, p.Build.Ref) || p.Config.IsDependencyRepo || !isManualBuildCommit(p.Build.CommitMessage):
+		// 对于 Dependency Repo 只做 fetch & checkoutHead
+		if !p.Config.IsDependencyRepo {
+			if isManualBuildBranch(p.Build.CommitMessage) {
+				p.Build.Ref = fmt.Sprintf("refs/heads/%s", p.Build.Branch)
+			}
+			if isManualBuildPR(p.Build.CommitMessage) {
+				p.Build.Ref = fmt.Sprintf("refs/pull/%s/head", p.Build.PullReqNumber)
+			}
+		}
 		cmds = append(cmds, fetch(p.Build.Ref, p.Config.Tags, p.Config.Depth))
 		cmds = append(cmds, checkoutHead())
 	default:
+		if isManualBuildCommit(p.Build.CommitMessage) {
+			p.Build.Ref = fmt.Sprintf("refs/heads/%s", p.Build.Branch)
+		}
 		cmds = append(cmds, fetch(p.Build.Ref, p.Config.Tags, p.Config.Depth))
 		cmds = append(cmds, checkoutSha(p.Build.Commit))
 	}

@@ -98,6 +98,21 @@ func main() {
 		// ------------------------------------------------------
 		// 自定义 drone-git 参数
 		cli.StringFlag{
+			Name:   "commit.message",
+			Usage:  "commit message",
+			EnvVar: "DRONE_COMMIT_MESSAGE",
+		},
+		cli.StringFlag{
+			Name:   "commit.branch",
+			Usage:  "commit branch",
+			EnvVar: "DRONE_COMMIT_BRANCH",
+		},
+		cli.StringFlag{
+			Name:   "pr.number",
+			Usage:  "commit branch",
+			EnvVar: "DRONE_PULL_REQUEST",
+		},
+		cli.StringFlag{
 			Name:   "custom.remote.url",
 			Usage:  "custom git remote url",
 			EnvVar: "PLUGIN_REMOTE_URL",
@@ -123,7 +138,6 @@ func main() {
 	if err := app.Run(os.Args); err != nil {
 		logrus.Fatal(err)
 	}
-
 }
 
 func run(c *cli.Context) error {
@@ -157,10 +171,13 @@ func run(c *cli.Context) error {
 			Clone: remote,
 		},
 		Build: Build{
-			Commit: c.String("sha"),
-			Event:  c.String("event"),
-			Path:   path,
-			Ref:    refs,
+			Commit:        c.String("sha"),
+			Event:         c.String("event"),
+			Path:          path,
+			Ref:           refs,
+			CommitMessage: c.String("commit.message"),
+			Branch:        c.String("commit.branch"),
+			PullReqNumber: c.String("pr.number"),
 		},
 		Netrc: Netrc{
 			Login:    c.String("netrc.username"),

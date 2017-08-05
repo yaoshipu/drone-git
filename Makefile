@@ -5,4 +5,8 @@ publish:
 	docker build --rm=true -t index.qiniu.com/spock/git-plugin .
 	docker push index.qiniu.com/spock/git-plugin
 
-all: build publish
+publish-proxy:
+	docker build --rm=true -t index.qiniu.com/spock/git-plugin:cs-proxy -f ./Dockerfile.Proxy .
+	docker push index.qiniu.com/spock/git-plugin:cs-proxy
+
+all: build publish publish-proxy

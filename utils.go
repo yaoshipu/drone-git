@@ -40,6 +40,21 @@ func isTag(event, ref string) bool {
 		strings.HasPrefix(ref, "refs/tags/")
 }
 
+// helper function msg true if the commit message contains MANUAL_BUILD_BRANCH.
+func isManualBuildBranch(message string) bool {
+	return strings.Contains(message, "MANUAL_BUILD_BRANCH")
+}
+
+// helper function msg true if the commit message contains MANUAL_BUILD_PR.
+func isManualBuildPR(message string) bool {
+	return strings.Contains(message, "MANUAL_BUILD_PR")
+}
+
+// helper function msg true if the commit message contains MANUAL_BUILD_COMMIT.
+func isManualBuildCommit(message string) bool {
+	return strings.Contains(message, "MANUAL_BUILD_COMMIT")
+}
+
 // helper function to write a netrc file.
 func writeNetrc(machine, login, password string) error {
 	if machine == "" {

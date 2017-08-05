@@ -1,7 +1,4 @@
-# CGO_ENABLED=0 GOOS=linux GOARCH=arm go build -a -tags netgo
-# docker build --rm=true -f Dockerfile.armhf -t plugins/git:arm .
-
-FROM scaleway/alpine:armhf-latest
+FROM alpine:3.5
 
 RUN apk update && \
   apk add \
@@ -13,4 +10,9 @@ RUN apk update && \
   rm -rf /var/cache/apk/*
 
 ADD drone-git /bin/
+
+ENV HTTPS_PROXY http://10.200.20.61:8118
+
+ENV HTTP_PROXY http://10.200.20.61:8118
+
 ENTRYPOINT ["/bin/drone-git"]

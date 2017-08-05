@@ -8,11 +8,14 @@ type (
 	}
 
 	Build struct {
-		Path   string
-		Event  string
-		Number int
-		Commit string
-		Ref    string
+		Path          string
+		Event         string
+		Number        int
+		Commit        string
+		Ref           string
+		CommitMessage string
+		Branch        string
+		PullReqNumber string
 	}
 
 	Netrc struct {
